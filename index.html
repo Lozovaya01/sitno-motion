@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>СИТНО — анимация главной страницы</title>
+<style>
+@font-face{font-family:'TTC';src:url('onest-cyrillic-400.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'TTC';src:url('onest-latin-400.woff2') format('woff2');font-weight:400;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'TTC';src:url('onest-cyrillic-500.woff2') format('woff2');font-weight:500;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'TTC';src:url('onest-latin-500.woff2') format('woff2');font-weight:500;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'TTC';src:url('onest-cyrillic-600.woff2') format('woff2');font-weight:600;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'TTC';src:url('onest-latin-600.woff2') format('woff2');font-weight:600;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'PTN';src:url('PT_Sans-Narrow-Web-Bold.ttf');font-weight:700}
+
+:root{
+  --navy:#002F6D; --gold:#9C8044; --yellow:#FFC846;
+  --soft:cubic-bezier(.33,1,.68,1);
+  --soft-io:cubic-bezier(.65,0,.35,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'TTC',sans-serif;color:var(--navy);background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block}
+.wrap{max-width:1400px;margin:0 auto;padding:0 40px}
+@media (max-width:900px){.wrap{padding:0 16px}}
+
+.rh{display:inline-block;width:16px;height:11px;flex:0 0 auto;background:var(--yellow);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.over{font:700 14px/1 'PTN';letter-spacing:.09em;text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:10px}
+.h2{font:500 clamp(34px,4vw,56px)/.9 'TTC';letter-spacing:-.02em}
+.h3{font:600 22px/1.15 'TTC'}
+.lead{font:500 19px/1.3 'TTC';opacity:.8}
+.btn{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;gap:12px;height:54px;padding:0 28px;border:0;border-radius:40px;background:var(--navy);color:#fff;font:500 17px/1 'TTC';cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn .rh{width:14px;height:10px}
+.btn.ghost{background:#fff;color:var(--navy);box-shadow:inset 0 0 0 1.5px rgba(0,47,109,.22)}
+/* кнопки: жёлтый лоскут заходит диагональю под 29° */
+.btn.pt:before{content:'';position:absolute;z-index:-1;top:-2px;bottom:-2px;left:-30%;width:160%;background:var(--yellow);transform:translateX(-102%) skewX(-29deg);transition:transform .75s var(--soft)}
+.btn.pt{transition:color .5s var(--soft) .08s,box-shadow .5s var(--soft)}
+.btn.pt .rh{transition:background-color .5s var(--soft),transform .75s var(--soft)}
+.btn.pt:hover{color:var(--navy)}
+.btn.pt:hover:before{transform:translateX(0) skewX(-29deg)}
+.btn.pt:hover .rh{background:var(--navy);transform:translateX(3px) rotate(180deg)}
+.btn.ghost.pt:hover{box-shadow:inset 0 0 0 1.5px rgba(0,47,109,0)}
+.arr{position:relative;width:44px;height:44px;border-radius:50%;background:var(--navy);display:grid;place-items:center;flex:0 0 auto;overflow:hidden;transition:background-color .55s var(--soft)}
+.arr svg{width:13px;height:12px;overflow:visible}
+.arr svg path{stroke:#fff;transition:stroke .4s var(--soft)}
+@keyframes through{0%{transform:none;opacity:1}26%{transform:translateX(20px);opacity:0}27%{transform:translateX(-20px);opacity:0}52%{transform:none;opacity:1}100%{transform:none;opacity:1}}
+/* теги */
+.chip{position:relative;display:inline-flex;align-items:center;height:40px;padding:0 19px;border-radius:30px;background:#F3F5F9;font:500 16px/1 'TTC';color:var(--navy);cursor:pointer;white-space:nowrap;transition:background-color .6s var(--soft),color .45s var(--soft)}
+.chip:after{content:'';position:absolute;inset:4px;border-radius:30px;border:1.2px dashed rgba(255,255,255,.95);opacity:0;transform:scale(1.06);transition:opacity .6s var(--soft) .08s,transform .7s var(--soft) .08s}
+.chip:hover,.chip.on{background:var(--c);color:#fff}
+.chip:hover:after{opacity:1;transform:none}
+
+/* ---------- блок ---------- */
+.blk{padding:56px 0}
+.blk:first-of-type{padding-top:40px}
+.blk:last-of-type{padding-bottom:90px}
+.bt{font:500 30px/1.1 'TTC';letter-spacing:-.01em;margin-bottom:24px}
+.stage{position:relative;border-radius:28px;overflow:hidden}
+.line{box-shadow:inset 0 0 0 1px rgba(0,47,109,.08)}
+.draw{stroke-dasharray:1 2;stroke-dashoffset:1.01;transition:stroke-dashoffset var(--d,1.4s) var(--e,var(--soft-io)) var(--dl,0s)}
+.on .draw{stroke-dashoffset:0}
+
+/* ============ 1. Первый экран (сцена варианта 9, шапка как в обложке №14) ============ */
+.hero{width:100%;aspect-ratio:1920/1054;border-radius:24px;background:#F3E3C6;--k:.7}
+.scene{position:absolute;inset:0;z-index:0}
+.scene .bg,.scene .pl{position:absolute;inset:-2%;background:url('hero9_clean.jpg') center/cover no-repeat;transform:scale(1.03);will-change:transform}
+.scene .pl{background:none}
+.pkw{position:absolute;will-change:transform;transform-origin:50% 100%}
+.pkw img{position:absolute;inset:0;width:100%;height:100%;filter:saturate(.88) contrast(.92) brightness(.99) sepia(.1) blur(calc(var(--k)*.35px))}
+
+.pkw .cs{position:absolute;left:-3%;right:-3%;top:97.5%;height:9%;border-radius:50%;mix-blend-mode:multiply;background:radial-gradient(50% 45% at 50% 22%,rgba(120,70,25,.55),rgba(120,70,25,.18) 55%,rgba(120,70,25,0) 100%);filter:blur(calc(var(--k)*5px))}
+.pkw .cs2{position:absolute;left:5%;right:5%;top:98.3%;height:2.4%;border-radius:50%;mix-blend-mode:multiply;background:rgba(90,48,12,.8);filter:blur(calc(var(--k)*3px))}
+.scene .pkw{perspective:calc(var(--k)*2400px);perspective-origin:50% 100%}
+.p3{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.p3 .sg{position:absolute;left:0;top:0;transform-origin:0 0;overflow:visible;backface-visibility:hidden;will-change:transform}
+.p3 .df{position:absolute;width:0;height:0}
+.p3 .hl{mix-blend-mode:overlay}
+.pkw .gl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen;opacity:.85;overflow:visible}
+.pkw .band{animation:glint 9s var(--soft-io) var(--gd,2.8s) infinite}
+@keyframes glint{0%{transform:translateX(-140%) skewX(-18deg)}20%{transform:translateX(240%) skewX(-18deg)}100%{transform:translateX(240%) skewX(-18deg)}}
+.sun{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(42% 58% at 50% 10%,rgba(255,236,190,.85),rgba(255,226,170,.3) 45%,rgba(255,220,160,0) 75%);animation:sun 7s ease-in-out infinite alternate}
+@keyframes sun{from{opacity:.25}to{opacity:.8}}
+.rays{position:absolute;left:20%;right:20%;top:-30%;height:120%;pointer-events:none;mix-blend-mode:soft-light;
+  background:repeating-conic-gradient(from 168deg at 50% 0%,rgba(255,240,200,0) 0deg,rgba(255,240,200,.55) 3deg,rgba(255,240,200,0) 7deg,rgba(255,240,200,0) 11deg);
+  -webkit-mask:radial-gradient(70% 80% at 50% 0%,#000 20%,transparent 75%);mask:radial-gradient(70% 80% at 50% 0%,#000 20%,transparent 75%);
+  opacity:.3;transform-origin:50% 0;animation:rays 16s ease-in-out infinite alternate}
+@keyframes rays{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.dust{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.dust i{position:absolute;bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;background:rgba(255,248,225,.9);filter:blur(1px);opacity:0;animation:dust var(--t) linear var(--dl) infinite}
+@keyframes dust{0%{transform:translate(0,0);opacity:0}15%{opacity:.8}85%{opacity:.6}100%{transform:translate(var(--x),calc(var(--k)*-560px));opacity:0}}
+.h-glow{position:absolute;inset:0;pointer-events:none;background:#FFF6E2;opacity:.92;transition:opacity 2s var(--soft-io) .3s}
+.on .h-glow{opacity:0}
+/* шапка — стеклянная плашка поверх сцены */
+.hd{position:absolute;z-index:5;left:50%;top:calc(var(--k)*18px);width:calc(var(--k)*1844px);height:calc(var(--k)*72px);margin-left:calc(var(--k)*-922px);display:flex;align-items:center;padding:0 calc(var(--k)*10px) 0 calc(var(--k)*15px);border-radius:200px;background:rgba(255,255,255,.6);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);opacity:0;transform:translateY(calc(var(--k)*-24px));transition:opacity .9s var(--soft) .05s,transform .9s var(--soft) .05s}
+.on .hd{opacity:1;transform:none}
+.hd>*,.hd .mi{opacity:0;transform:translateY(-8px);transition:opacity .7s var(--soft) var(--hd,0s),transform .7s var(--soft) var(--hd,0s)}
+.on .hd>*,.on .hd .mi{opacity:1;transform:none}
+.hd .lg{--hd:.2s;display:block;cursor:pointer}
+.hd .lg img{width:calc(var(--k)*172px);height:calc(var(--k)*42px);display:block;transition:transform .45s var(--soft)}
+.hd .lg:hover img{transform:scale(1.035)}
+.hd .mn{opacity:1;transform:none;display:flex;align-items:center;gap:calc(var(--k)*32px);margin-left:calc(var(--k)*56px)}
+.hd .mi{position:relative;display:inline-flex;align-items:center;gap:calc(var(--k)*8px);font:500 calc(var(--k)*18px)/1 'TTC';color:var(--navy);cursor:pointer;white-space:nowrap;padding:calc(var(--k)*6px) 0}
+.hd .mi:nth-child(1){--hd:.28s}.hd .mi:nth-child(2){--hd:.34s}.hd .mi:nth-child(3){--hd:.4s}.hd .mi:nth-child(4){--hd:.46s}.hd .mi:nth-child(5){--hd:.52s}
+.hd .mi:after{content:'';position:absolute;left:0;right:0;bottom:0;border-top:1.5px dashed rgba(0,47,109,.5);transform:scaleX(0);transform-origin:0 50%;transition:transform .5s var(--soft)}
+.hd .mi:hover:after{transform:scaleX(1)}
+.hd .mi img{width:calc(var(--k)*11px);height:calc(var(--k)*9px);transition:transform .45s var(--soft)}
+.hd .dd:hover img{transform:rotate(180deg)}
+.hd .dd:after{right:calc(var(--k)*19px)}
+.hd .sr{--hd:.6s;margin-left:auto;width:calc(var(--k)*242px);height:calc(var(--k)*52px);border-radius:200px;box-shadow:inset 0 0 0 1px rgba(0,47,109,.12);display:flex;align-items:center;gap:calc(var(--k)*8px);padding-left:calc(var(--k)*17px);cursor:text;transition:opacity .7s var(--soft) var(--hd),transform .7s var(--soft) var(--hd),box-shadow .45s var(--soft),background-color .45s var(--soft)}
+.hd .sr img{width:calc(var(--k)*17px);height:calc(var(--k)*19px);transition:transform .45s var(--soft)}
+.hd .sr span{font:500 calc(var(--k)*18px)/1 'TTC';color:var(--navy);opacity:.6;transition:opacity .45s var(--soft)}
+.hd .sr:hover{box-shadow:inset 0 0 0 1px rgba(0,47,109,.38);background:rgba(255,255,255,.85)}
+.hd .sr:hover img{transform:rotate(-12deg) scale(1.1)}
+.hd .sr:hover span{opacity:.8}
+.hd .hb{--hd:.68s;margin-left:calc(var(--k)*8px);width:calc(var(--k)*174px);height:calc(var(--k)*52px);padding:0;justify-content:center;font-size:calc(var(--k)*18px);transition:opacity .7s var(--soft) var(--hd),transform .7s var(--soft) var(--hd),color .5s var(--soft) .08s}
+@media (max-width:900px){.hd .mn,.hd .sr{display:none}.hd .hb{margin-left:auto}}
+/* текст и кнопка — по обложке №14 */
+.h-txt{position:absolute;left:0;right:0;top:calc(var(--k)*160px);text-align:center;pointer-events:none}
+.h-txt .over{font-size:calc(var(--k)*15px);letter-spacing:.13em;gap:calc(var(--k)*12px);opacity:0;transform:translateY(10px);transition:opacity 1s var(--soft) .8s,transform 1s var(--soft) .8s}
+.h-txt .over .rh{width:calc(var(--k)*16px);height:calc(var(--k)*11px)}
+.h-txt h1{margin-top:calc(var(--k)*18px);font:500 calc(var(--k)*76px)/.85 'TTC';letter-spacing:-.025em}
+.h-txt h1 .w{display:inline-block;opacity:0;transform:translateY(18px);transition:opacity 1.1s var(--soft),transform 1.1s var(--soft)}
+.on .h-txt .over,.on .h-txt h1 .w{opacity:1;transform:none}
+.h-btn{position:absolute;left:50%;top:calc(var(--k)*930px);transform:translate(-50%,14px);opacity:0;transition:opacity 1s var(--soft) 1.6s,transform 1s var(--soft) 1.6s}
+.on .h-btn{opacity:1;transform:translate(-50%,0)}
+.h-btn .btn{height:calc(var(--k)*60px);padding:0 calc(var(--k)*32px);font:600 calc(var(--k)*18px)/1 'TTC';gap:calc(var(--k)*13px);border-radius:calc(var(--k)*28px);background:#fff;color:var(--navy);box-shadow:0 10px 26px rgba(90,60,20,.14)}
+.h-btn .btn .rh{width:calc(var(--k)*14px);height:calc(var(--k)*10px)}
+
+/* ============ 2. О бренде ============ */
+.about{padding:80px 30px 90px;text-align:center}
+.zn{width:170px;height:auto;margin:0 auto;overflow:visible;display:block;position:relative;z-index:2}
+.zn .heart{transform-box:fill-box;transform-origin:50% 60%}
+.on .zn .heart{animation:beat .9s var(--soft-io) 1.7s 1}
+@keyframes beat{0%{transform:scale(1)}30%{transform:scale(1.08)}55%{transform:scale(.98)}75%{transform:scale(1.03)}100%{transform:scale(1)}}
+.about .h2,.about .lead{position:relative;z-index:2;opacity:0;transform:translateY(12px);transition:opacity .8s var(--soft),transform .8s var(--soft)}
+.about .h2{margin-top:30px;transition-delay:.9s}
+.about .lead{margin:18px auto 0;max-width:640px;transition-delay:1.05s}
+.on .about .h2,.on .about .lead{opacity:1;transform:none}
+.fl{position:absolute;width:var(--w);aspect-ratio:1.79/1;will-change:transform}
+.fl b{position:absolute;inset:0;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:var(--c);opacity:0;transform:scale(.7);transition:opacity .8s var(--soft) var(--dl),transform .8s var(--soft) var(--dl)}
+.on .fl b{opacity:1;transform:none}
+
+/* ============ 3. Новинки ============ */
+.nov{background:linear-gradient(180deg,#FFF7E4,#FDEFD3);padding:50px 40px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,380px));justify-content:center;gap:22px}
+.card{position:relative;height:500px;border-radius:36px;overflow:hidden;background:#fff;box-shadow:0 14px 34px rgba(120,80,20,.10);transition:transform .55s var(--soft),box-shadow .55s var(--soft);cursor:pointer}
+.card .ph{position:absolute;left:0;right:0;top:0;height:300px;overflow:hidden}
+.card .pb{position:absolute;inset:-30px;will-change:transform;transform:translate3d(0,0,0);transition:transform .7s cubic-bezier(.4,0,.2,1)}
+.card .pb svg{position:absolute;inset:30px;width:calc(100% - 60px);height:calc(100% - 60px);overflow:visible}
+.card .sd{stroke-dasharray:6 6;stroke-dashoffset:0;transition:stroke-dashoffset .7s cubic-bezier(.4,0,.2,1)}
+.card .over{position:absolute;left:32px;top:36px;z-index:2}
+.card .over .rh{transition:transform .6s var(--soft)}
+.card .pkw{position:absolute;left:0;right:0;top:40px;height:260px;display:flex;align-items:center;justify-content:center}
+.card .pkw img{position:relative;inset:auto;width:auto;transition:transform .6s var(--soft),filter .6s var(--soft);filter:drop-shadow(0 18px 14px rgba(60,40,10,.15)) drop-shadow(0 3px 3px rgba(60,40,10,.1))}
+.card .h3{position:absolute;left:32px;right:100px;top:330px}
+.card .ft{position:absolute;left:22px;right:22px;bottom:84px;border-top:1px solid rgba(0,47,109,.12)}
+.card .mt{position:absolute;left:32px;bottom:38px;font:700 13px/1 'PTN';letter-spacing:.1em;color:var(--gold)}
+.card .arr{position:absolute;right:24px;bottom:24px}
+.card:hover{transform:translateY(-6px);box-shadow:0 26px 50px rgba(120,80,20,.15)}
+.card:hover .pb{transform:translate3d(10px,14px,0)}
+.card:hover .sd{stroke-dashoffset:-24}
+.card:hover .pkw img{transform:translateY(-10px) scale(1.03);filter:drop-shadow(0 30px 20px rgba(60,40,10,.12)) drop-shadow(0 6px 6px rgba(60,40,10,.08))}
+.card:hover .over .rh{transform:scale(1.25) rotate(180deg)}
+.card:hover .arr{background-color:var(--yellow)}
+.card:hover .arr svg path{stroke:var(--navy)}
+.card:hover .arr svg{animation:through .75s ease-out}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.nov{padding:30px 20px}}
+
+/* ============ 4. Продукция (2×2, по макету) ============ */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--k)*20px);--k:.7}
+@media (max-width:900px){.pgrid{grid-template-columns:1fr}}
+.pt-o{position:relative;height:calc(var(--k)*520px);border-radius:calc(var(--k)*26px);overflow:hidden}
+.pt-i{position:absolute;left:0;top:0;width:930px;height:520px;transform:scale(var(--k));transform-origin:0 0}
+.pt-i>*{position:absolute}
+.pt-i .dg{left:0;top:114px;width:930px;height:406px;overflow:hidden}
+.pt-i .dg img{width:930px;height:406px}
+.pt-i .tb{left:0;top:0;width:930px;height:520px}
+.pt-i .rs{border-radius:40px}
+.pt-i .bs{background:rgba(60,40,10,.34);border-radius:27px}
+.pt-i .pk{object-fit:cover}
+.pt-i .tx{left:32px;top:28px;width:470px}
+.pt-i .tt{font:600 28px/31.36px 'TTC';color:var(--navy)}
+.pt-i .ov{margin-top:12px;font:700 13px/1 'PTN';letter-spacing:.78px;text-transform:uppercase;color:rgba(0,47,109,.55)}
+.pt-i .chs{display:flex;flex-wrap:wrap;gap:8px 7px;max-width:460px;margin-top:22px}
+.pt-i .chip{height:34px;padding:0 15px;font-size:15px;background:rgba(255,255,255,.8);color:rgba(0,47,109,.6)}
+.pt-i .chip:after{inset:3px}
+.pt-i .chip:hover,.pt-i .chip.on{background:var(--c);color:#fff}
+.pt-i .ar{left:32px;top:445px;width:43px;height:43px;border-radius:50%;background:#fff;display:grid;place-items:center;cursor:pointer;overflow:hidden;transition:background-color .55s var(--soft)}
+.pt-i .ar svg{width:12px;height:11px;overflow:visible}
+.pt-i .ar svg path{stroke:var(--navy)}
+.pt-o:hover .ar{background:var(--yellow)}
+.pt-o:hover .ar svg{animation:through .75s ease-out}
+.pt-i .pk{transform-origin:50% 100%;transition:transform .8s var(--soft)}
+.pt-i .pk+.pk{transition-delay:.06s}
+.pt-i .bs{transition:transform .8s var(--soft)}
+.pt-o:hover .pk{transform:scale(1.05)}
+.pt-o:hover .bs{transform:scaleX(1.06)}
+.pt-i .st{left:0;top:0;width:930px;height:520px;pointer-events:none}
+/* вариант Б: лоскут с паттерном ложится по диагонали */
+.pB .dg{clip-path:polygon(0 100%,0 100%,0 100%);transition:clip-path 1.3s var(--soft-io) var(--dl,0s)}
+.on .pB .dg{clip-path:polygon(0 100%,100% 0,100% 100%)}
+.pB .dg img{transform:translate(-26px,14px) scale(1.04);transition:transform 2.2s var(--soft) var(--dl,0s)}
+.on .pB .dg img{transform:scale(1.04)}
+.pB:hover .dg img{transform:translate(-10px,-6px) scale(1.04);transition-duration:2.4s;transition-delay:0s}
+.pB .seam{left:0;top:114px;width:930px;height:406px;pointer-events:none}
+.pt-i .lift{left:0;top:0;width:930px;height:520px;transform:translateY(90px);opacity:0;transition:transform 1.25s var(--soft) calc(var(--dl,0s) + .25s),opacity .9s var(--soft) calc(var(--dl,0s) + .25s)}
+.pt-i .lift>*{position:absolute}
+.on .pt-i .lift{transform:none;opacity:1}
+
+/* ============ 5. Кнопки ============ */
+.kit{padding:64px 40px;display:flex;flex-wrap:wrap;gap:40px 56px;justify-content:center;align-items:center}
+.arr.big{width:58px;height:58px}
+.arr.big svg{width:16px;height:14px}
+.arr.go{cursor:pointer}
+.arr.go:hover{background-color:var(--yellow)}
+.arr.go:hover svg path{stroke:var(--navy)}
+.arr.go:hover svg{animation:through .75s ease-out}
+.chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- 1. Первый экран -->
+<section class="blk"><div class="wrap">
+  <div class="bt">Первый экран</div>
+  <div class="stage hero" id="hero">
+    <div class="scene"><div class="bg"></div><div class="pl"></div></div>
+    <div class="rays"></div>
+    <div class="sun"></div>
+    <div class="dust"></div>
+    <div class="h-glow"></div>
+    <header class="hd">
+      <a class="lg"><img src="head_logo.svg" alt="СИТНО"></a>
+      <nav class="mn"><a class="mi dd">Продукция<img src="head_chevron.svg" alt=""></a><a class="mi">О бренде</a><a class="mi">Рецепты</a><a class="mi">Полезное</a><a class="mi">Контакты</a></nav>
+      <label class="sr"><img src="head_search.svg" alt=""><span>Поиск</span></label>
+      <a class="btn pt hb">Где купить</a>
+    </header>
+    <div class="h-txt">
+      <span class="over"><span class="rh"></span>ЮЖНЫЙ УРАЛ · С 1989 ГОДА</span>
+      <h1><span class="w" style="transition-delay:.95s">Еда,</span> <span class="w" style="transition-delay:1.05s">сделанная</span><br><span class="w" style="transition-delay:1.15s">с</span> <span class="w" style="transition-delay:1.22s">чистым</span> <span class="w" style="transition-delay:1.3s">сердцем</span></h1>
+    </div>
+    <div class="h-btn"><a class="btn pt"><span class="rh"></span>Смотреть продукцию</a></div>
+  </div>
+</div></section>
+
+<!-- 2. О бренде -->
+<section class="blk"><div class="wrap">
+  <div class="bt">О бренде</div>
+  <div class="stage line about" id="about">
+    <svg class="zn" viewBox="784 260 94 86">
+      <defs>
+        <mask id="mzh" maskUnits="userSpaceOnUse" x="780" y="256" width="102" height="94"><g fill="none" stroke="#fff" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><path class="draw" style="--d:.85s;--dl:.1s;--e:cubic-bezier(.45,.05,.55,.95)" pathLength="1" d="M827.48,272.93 C827.30,272.85 826.77,272.66 826.45,272.48 C826.13,272.29 825.84,272.05 825.54,271.82 C825.24,271.60 824.95,271.36 824.65,271.14 C824.35,270.92 824.04,270.71 823.73,270.50 C823.41,270.29 823.09,270.09 822.76,269.90 C822.44,269.71 822.11,269.54 821.77,269.36 C821.44,269.19 821.10,269.02 820.76,268.86 C820.42,268.70 820.08,268.55 819.74,268.41 C819.39,268.27 819.04,268.14 818.69,268.02 C818.33,267.91 817.96,267.80 817.60,267.71 C817.24,267.62 816.87,267.55 816.50,267.49 C816.13,267.43 815.75,267.38 815.38,267.35 C815.00,267.32 814.62,267.32 814.25,267.32 C813.88,267.33 813.51,267.36 813.14,267.40 C812.77,267.44 812.39,267.50 812.02,267.59 C811.66,267.67 811.30,267.78 810.95,267.91 C810.60,268.04 810.25,268.20 809.92,268.38 C809.60,268.55 809.28,268.75 808.98,268.98 C808.67,269.20 808.39,269.44 808.11,269.70 C807.84,269.96 807.56,270.22 807.33,270.51 C807.09,270.80 806.87,271.11 806.67,271.43 C806.48,271.74 806.31,272.09 806.15,272.43 C805.99,272.76 805.84,273.10 805.71,273.45 C805.59,273.80 805.48,274.17 805.39,274.54 C805.30,274.90 805.22,275.27 805.16,275.64 C805.10,276.01 805.06,276.36 805.02,276.75 C804.99,277.14 804.95,277.60 804.94,278.00 C804.92,278.40 804.92,278.75 804.94,279.12 C804.95,279.50 804.99,279.88 805.02,280.25 C805.06,280.62 805.09,280.99 805.14,281.36 C805.19,281.73 805.26,282.11 805.34,282.48 C805.41,282.84 805.49,283.21 805.58,283.57 C805.66,283.94 805.74,284.31 805.84,284.68 C805.94,285.04 806.06,285.38 806.19,285.74 C806.31,286.09 806.44,286.45 806.58,286.80 C806.71,287.15 806.84,287.50 806.99,287.85 C807.13,288.20 807.28,288.53 807.44,288.88 C807.59,289.22 807.74,289.56 807.91,289.90 C808.08,290.24 808.27,290.56 808.45,290.89 C808.63,291.21 808.82,291.54 809.01,291.86 C809.20,292.19 809.40,292.51 809.60,292.82 C809.80,293.14 810.02,293.44 810.24,293.75 C810.45,294.06 810.66,294.36 810.89,294.66 C811.11,294.96 811.35,295.26 811.59,295.55 C811.82,295.84 812.06,296.14 812.30,296.43 C812.54,296.71 812.80,296.99 813.05,297.26 C813.30,297.54 813.56,297.81 813.83,298.07 C814.09,298.34 814.35,298.61 814.62,298.88 C814.90,299.14 815.17,299.39 815.45,299.64 C815.73,299.89 816.01,300.14 816.30,300.38 C816.59,300.61 816.90,300.83 817.20,301.05 C817.50,301.27 817.81,301.49 818.12,301.70 C818.44,301.91 818.75,302.12 819.08,302.31 C819.40,302.51 819.72,302.70 820.05,302.88 C820.38,303.05 820.71,303.23 821.05,303.39 C821.39,303.55 821.73,303.70 822.08,303.84 C822.42,303.97 822.78,304.10 823.14,304.21 C823.49,304.33 823.85,304.44 824.21,304.54 C824.57,304.63 824.94,304.71 825.31,304.77 C825.68,304.84 826.06,304.89 826.44,304.93 C826.81,304.96 827.19,304.99 827.56,305.00 C827.94,305.01 828.31,305.00 828.69,304.98 C829.06,304.95 829.43,304.91 829.80,304.85 C830.17,304.79 830.54,304.71 830.90,304.62 C831.26,304.54 831.63,304.44 831.99,304.34 C832.35,304.23 832.71,304.11 833.06,303.99 C833.42,303.86 833.77,303.73 834.11,303.57 C834.46,303.42 834.79,303.25 835.12,303.07 C835.46,302.90 835.78,302.72 836.10,302.52 C836.42,302.33 836.74,302.12 837.05,301.91 C837.36,301.70 837.67,301.49 837.98,301.27 C838.28,301.06 838.58,300.83 838.88,300.60 C839.17,300.37 839.46,300.14 839.75,299.90 C840.04,299.66 840.32,299.41 840.60,299.16 C840.88,298.91 841.17,298.66 841.44,298.40 C841.71,298.14 841.97,297.87 842.23,297.60 C842.48,297.33 842.74,297.05 842.99,296.76 C843.23,296.48 843.46,296.19 843.70,295.90 C843.94,295.61 844.17,295.31 844.40,295.01 C844.62,294.71 844.84,294.41 845.05,294.10 C845.26,293.79 845.48,293.49 845.69,293.18 C845.89,292.86 846.09,292.53 846.29,292.21 C846.48,291.89 846.67,291.57 846.86,291.25 C847.05,290.93 847.24,290.59 847.41,290.26 C847.59,289.93 847.76,289.60 847.92,289.26 C848.09,288.93 848.24,288.58 848.39,288.24 C848.54,287.89 848.69,287.55 848.83,287.20 C848.96,286.85 849.08,286.49 849.20,286.14 C849.32,285.78 849.42,285.42 849.52,285.06 C849.63,284.70 849.74,284.34 849.84,283.98 C849.94,283.61 850.04,283.25 850.11,282.89 C850.19,282.52 850.24,282.15 850.30,281.77 C850.36,281.40 850.41,281.04 850.45,280.66 C850.49,280.29 850.53,279.91 850.56,279.54 C850.59,279.16 850.63,278.80 850.62,278.43 C850.62,278.05 850.59,277.68 850.55,277.30 C850.51,276.93 850.47,276.55 850.41,276.18 C850.36,275.80 850.30,275.44 850.23,275.07 C850.15,274.71 850.07,274.34 849.96,273.98 C849.86,273.61 849.74,273.26 849.60,272.91 C849.46,272.57 849.29,272.23 849.10,271.90 C848.91,271.57 848.71,271.25 848.49,270.95 C848.27,270.65 848.04,270.35 847.79,270.07 C847.54,269.80 847.27,269.53 846.99,269.29 C846.70,269.04 846.40,268.80 846.09,268.60 C845.77,268.40 845.44,268.23 845.10,268.07 C844.76,267.92 844.40,267.80 844.04,267.70 C843.68,267.60 843.31,267.52 842.94,267.46 C842.57,267.40 842.20,267.35 841.83,267.32 C841.45,267.30 841.08,267.31 840.70,267.32 C840.33,267.34 839.95,267.38 839.58,267.43 C839.20,267.47 838.83,267.51 838.46,267.59 C838.09,267.66 837.72,267.76 837.36,267.86 C837.00,267.96 836.65,268.07 836.30,268.20 C835.95,268.33 835.61,268.49 835.26,268.64 C834.92,268.79 834.57,268.94 834.24,269.11 C833.90,269.28 833.58,269.46 833.25,269.65 C832.92,269.84 832.60,270.04 832.29,270.24 C831.97,270.44 831.67,270.65 831.36,270.86 C831.05,271.08 830.74,271.30 830.44,271.52 C830.14,271.75 829.86,272.00 829.55,272.21 C829.24,272.42 828.92,272.67 828.58,272.79 C828.23,272.91 827.66,272.90 827.48,272.93"/></g></mask>
+        <mask id="mzr" maskUnits="userSpaceOnUse" x="780" y="256" width="102" height="94"><g fill="none" stroke="#fff" stroke-width="3.57" stroke-linecap="round" stroke-linejoin="round"><path class="draw" style="--d:0.27s;--dl:0.50s;--e:cubic-bezier(.45,.05,.55,.95)" pathLength="1" d="M790.00,317.88 C790.17,317.79 790.67,317.53 791.01,317.38 C791.36,317.22 791.71,317.09 792.06,316.95 C792.41,316.81 792.77,316.67 793.12,316.52 C793.48,316.38 793.82,316.24 794.17,316.10 C794.52,315.96 794.88,315.83 795.23,315.69 C795.58,315.55 795.92,315.39 796.27,315.25 C796.62,315.11 796.98,314.97 797.33,314.82 C797.67,314.68 798.03,314.53 798.36,314.36 C798.70,314.19 799.02,314.00 799.34,313.80 C799.66,313.60 799.96,313.37 800.27,313.16 C800.59,312.95 800.90,312.74 801.23,312.54 C801.55,312.34 801.88,312.15 802.21,311.96 C802.54,311.78 802.87,311.60 803.20,311.43 C803.53,311.25 803.87,311.07 804.21,310.90 C804.55,310.73 804.89,310.58 805.24,310.43 C805.58,310.27 805.94,310.13 806.29,309.99 C806.64,309.85 806.99,309.71 807.35,309.59 C807.71,309.46 808.06,309.35 808.42,309.25 C808.79,309.15 809.17,309.07 809.54,308.99 C809.91,308.90 810.27,308.82 810.64,308.75 C811.01,308.68 811.39,308.63 811.76,308.57 C812.14,308.52 812.51,308.48 812.89,308.44 C813.26,308.40 813.64,308.35 814.01,308.32 C814.39,308.30 814.77,308.29 815.15,308.30 C815.53,308.31 815.90,308.36 816.27,308.39 C816.65,308.42 817.04,308.44 817.41,308.48 C817.79,308.51 818.16,308.55 818.54,308.61 C818.91,308.67 819.28,308.76 819.65,308.84 C820.02,308.92 820.38,309.01 820.75,309.10 C821.12,309.19 821.49,309.28 821.85,309.38 C822.21,309.47 822.58,309.57 822.94,309.69 C823.30,309.80 823.66,309.92 824.01,310.05 C824.37,310.18 824.72,310.31 825.08,310.45 C825.43,310.59 825.78,310.74 826.12,310.89 C826.47,311.04 826.81,311.20 827.15,311.36 C827.49,311.52 827.84,311.68 828.17,311.85 C828.51,312.02 828.85,312.19 829.19,312.36 C829.52,312.54 829.86,312.72 830.19,312.90 C830.52,313.08 830.84,313.28 831.17,313.46 C831.51,313.64 831.83,313.84 832.17,313.99 C832.52,314.14 832.87,314.28 833.24,314.38 C833.60,314.47 833.99,314.51 834.36,314.56 C834.74,314.61 835.11,314.65 835.49,314.68 C835.86,314.70 836.25,314.71 836.62,314.74 C837.00,314.76 837.38,314.79 837.75,314.81 C838.12,314.84 838.50,314.88 838.88,314.90 C839.25,314.92 839.63,314.95 840.01,314.96 C840.39,314.97 840.81,315.07 841.15,314.98 C841.49,314.88 841.88,314.68 842.08,314.40 C842.28,314.12 842.20,313.64 842.35,313.30 C842.50,312.96 842.72,312.62 843.00,312.39 C843.28,312.15 843.67,312.04 844.01,311.89 C844.36,311.73 844.71,311.60 845.06,311.46 C845.41,311.32 845.76,311.19 846.11,311.05 C846.46,310.91 846.81,310.77 847.16,310.62 C847.51,310.48 847.87,310.34 848.23,310.20 C848.58,310.06 848.92,309.93 849.27,309.79 C849.62,309.65 849.98,309.49 850.33,309.35 C850.68,309.21 851.02,309.07 851.38,308.93 C851.73,308.78 852.07,308.64 852.42,308.50 C852.77,308.36 853.12,308.23 853.48,308.09 C853.83,307.95 854.19,307.80 854.54,307.66 C854.89,307.52 855.24,307.38 855.59,307.24 C855.94,307.10 856.29,306.95 856.64,306.81 C856.99,306.67 857.34,306.54 857.69,306.40 C858.04,306.26 858.40,306.12 858.74,305.96 C859.08,305.80 859.48,305.69 859.74,305.44 C859.99,305.19 860.23,304.81 860.27,304.48 C860.32,304.14 860.19,303.71 860.01,303.40 C859.84,303.09 859.52,302.80 859.21,302.61 C858.90,302.42 858.50,302.33 858.14,302.25 C857.77,302.17 857.39,302.15 857.01,302.14 C856.64,302.12 856.25,302.12 855.88,302.15 C855.50,302.18 855.13,302.23 854.76,302.30 C854.39,302.37 854.01,302.45 853.65,302.56 C853.29,302.67 852.93,302.80 852.59,302.95 C852.24,303.10 851.91,303.27 851.58,303.45 C851.24,303.62 850.91,303.82 850.58,304.00 C850.24,304.18 849.92,304.36 849.59,304.54 C849.26,304.72 848.92,304.91 848.59,305.09 C848.26,305.27 847.93,305.45 847.60,305.62 C847.27,305.80 846.93,305.98 846.60,306.16 C846.27,306.34 845.93,306.53 845.60,306.71 C845.27,306.90 844.94,307.08 844.61,307.26 C844.28,307.44 843.95,307.62 843.61,307.80 C843.28,307.98 842.94,308.17 842.61,308.35 C842.28,308.53 841.96,308.71 841.62,308.89 C841.29,309.07 840.96,309.24 840.62,309.43 C840.29,309.61 839.96,309.80 839.62,309.98 C839.29,310.15 838.79,310.41 838.62,310.50"/><path class="draw" style="--d:0.27s;--dl:0.75s;--e:cubic-bezier(.45,.05,.55,.95)" pathLength="1" d="M799.62,337.12 C799.79,337.03 800.29,336.76 800.61,336.57 C800.94,336.39 801.26,336.19 801.59,336.00 C801.91,335.81 802.23,335.60 802.56,335.43 C802.89,335.25 803.22,335.06 803.58,334.94 C803.93,334.82 804.30,334.73 804.67,334.70 C805.05,334.67 805.43,334.70 805.80,334.74 C806.17,334.78 806.54,334.86 806.91,334.94 C807.28,335.02 807.65,335.12 808.01,335.21 C808.38,335.31 808.75,335.40 809.11,335.50 C809.48,335.60 809.84,335.69 810.20,335.79 C810.56,335.88 810.93,335.97 811.30,336.06 C811.67,336.15 812.04,336.24 812.40,336.34 C812.76,336.43 813.12,336.53 813.49,336.62 C813.85,336.72 814.22,336.82 814.59,336.91 C814.95,337.01 815.31,337.10 815.67,337.19 C816.04,337.28 816.41,337.37 816.77,337.46 C817.14,337.56 817.50,337.65 817.86,337.75 C818.23,337.85 818.60,337.94 818.96,338.04 C819.33,338.13 819.70,338.22 820.06,338.31 C820.43,338.41 820.79,338.50 821.15,338.60 C821.51,338.70 821.88,338.79 822.25,338.89 C822.62,338.98 822.99,339.07 823.35,339.16 C823.71,339.26 824.07,339.35 824.44,339.45 C824.80,339.55 825.17,339.65 825.54,339.74 C825.90,339.83 826.27,339.92 826.64,339.99 C827.01,340.06 827.38,340.12 827.75,340.16 C828.12,340.20 828.50,340.24 828.88,340.24 C829.25,340.24 829.64,340.21 830.01,340.18 C830.39,340.14 830.75,340.09 831.12,340.02 C831.50,339.96 831.87,339.90 832.24,339.81 C832.60,339.73 832.96,339.62 833.33,339.51 C833.69,339.40 834.04,339.27 834.40,339.15 C834.76,339.03 835.11,338.91 835.46,338.77 C835.81,338.64 836.17,338.49 836.51,338.34 C836.86,338.19 837.20,338.03 837.54,337.86 C837.88,337.70 838.21,337.53 838.54,337.35 C838.87,337.17 839.20,336.99 839.52,336.80 C839.85,336.61 840.18,336.41 840.50,336.21 C840.82,336.02 841.14,335.82 841.46,335.62 C841.78,335.43 842.10,335.22 842.42,335.02 C842.75,334.82 843.07,334.62 843.39,334.43 C843.71,334.23 844.03,334.04 844.35,333.84 C844.67,333.64 844.98,333.44 845.30,333.24 C845.62,333.04 845.94,332.85 846.26,332.65 C846.58,332.45 846.90,332.25 847.23,332.05 C847.55,331.85 847.87,331.65 848.19,331.45 C848.51,331.25 848.83,331.05 849.15,330.85 C849.47,330.65 849.78,330.45 850.10,330.25 C850.42,330.05 850.74,329.85 851.06,329.65 C851.38,329.45 851.69,329.24 852.01,329.04 C852.33,328.84 852.65,328.64 852.98,328.44 C853.30,328.24 853.62,328.04 853.94,327.84 C854.26,327.64 854.58,327.45 854.90,327.25 C855.22,327.05 855.53,326.84 855.85,326.64 C856.17,326.44 856.49,326.24 856.81,326.04 C857.13,325.84 857.44,325.64 857.76,325.44 C858.08,325.24 858.41,325.04 858.73,324.84 C859.04,324.64 859.36,324.43 859.67,324.23 C859.99,324.02 860.31,323.83 860.62,323.62 C860.94,323.42 861.27,323.21 861.59,323.01 C861.91,322.81 862.22,322.61 862.54,322.41 C862.86,322.21 863.18,322.01 863.50,321.81 C863.82,321.61 864.13,321.40 864.45,321.20 C864.77,321.00 865.09,320.80 865.41,320.60 C865.73,320.40 866.04,320.19 866.36,319.99 C866.68,319.79 867.01,319.59 867.33,319.39 C867.64,319.19 867.96,318.98 868.27,318.77 C868.59,318.57 868.91,318.38 869.23,318.18 C869.54,317.97 869.87,317.77 870.16,317.54 C870.46,317.30 870.75,317.05 870.99,316.76 C871.22,316.47 871.44,316.15 871.59,315.81 C871.73,315.47 871.84,315.09 871.86,314.73 C871.89,314.36 871.86,313.95 871.75,313.60 C871.64,313.25 871.44,312.90 871.21,312.61 C870.99,312.32 870.66,312.10 870.39,311.85 C870.11,311.60 869.76,311.39 869.56,311.09 C869.36,310.78 869.25,310.39 869.20,310.02 C869.15,309.66 869.26,309.27 869.25,308.90 C869.24,308.52 869.22,308.13 869.11,307.77 C869.01,307.42 868.84,307.07 868.61,306.77 C868.39,306.48 868.08,306.22 867.77,306.01 C867.47,305.80 867.11,305.65 866.76,305.52 C866.41,305.40 866.03,305.31 865.66,305.24 C865.29,305.16 864.92,305.12 864.55,305.09 C864.18,305.05 863.80,305.04 863.42,305.02 C863.05,305.01 862.66,304.99 862.29,305.00 C861.91,305.01 861.52,305.00 861.16,305.09 C860.80,305.17 860.30,305.43 860.12,305.50"/><path class="draw" style="--d:0.10s;--dl:1.00s;--e:cubic-bezier(.45,.05,.55,.95)" pathLength="1" d="M818.62,321.88 C818.80,321.94 819.34,322.13 819.70,322.26 C820.06,322.40 820.42,322.55 820.77,322.69 C821.13,322.83 821.48,322.97 821.84,323.11 C822.19,323.25 822.55,323.40 822.90,323.54 C823.25,323.68 823.61,323.82 823.96,323.96 C824.32,324.10 824.67,324.25 825.02,324.39 C825.38,324.52 825.75,324.65 826.11,324.76 C826.48,324.87 826.84,324.99 827.21,325.05 C827.59,325.11 827.98,325.12 828.36,325.14 C828.74,325.15 829.12,325.14 829.50,325.12 C829.88,325.11 830.27,325.09 830.65,325.06 C831.03,325.04 831.41,324.99 831.79,324.96 C832.17,324.93 832.56,324.91 832.94,324.89 C833.32,324.86 833.70,324.83 834.08,324.80 C834.45,324.77 834.83,324.72 835.21,324.69 C835.59,324.65 835.98,324.63 836.36,324.60 C836.74,324.57 837.12,324.54 837.50,324.51 C837.88,324.48 838.27,324.46 838.65,324.43 C839.03,324.39 839.41,324.35 839.79,324.31 C840.17,324.28 840.54,324.24 840.92,324.21 C841.31,324.18 841.69,324.15 842.08,324.12 C842.46,324.10 842.83,324.07 843.21,324.04 C843.59,324.01 843.97,323.99 844.35,323.94 C844.73,323.89 845.15,323.89 845.49,323.75 C845.83,323.61 846.19,323.38 846.39,323.09 C846.59,322.80 846.65,322.37 846.70,322.00 C846.75,321.63 846.73,321.23 846.71,320.85 C846.69,320.47 846.65,320.09 846.59,319.71 C846.52,319.34 846.45,318.96 846.33,318.60 C846.20,318.24 846.03,317.89 845.84,317.56 C845.64,317.24 845.41,316.92 845.15,316.65 C844.89,316.38 844.58,316.13 844.26,315.93 C843.94,315.72 843.56,315.61 843.23,315.44 C842.89,315.26 842.41,314.97 842.25,314.88"/><path class="draw" style="--d:0.05s;--dl:1.09s;--e:cubic-bezier(.45,.05,.55,.95)" pathLength="1" d="M849.50,314.88 C849.69,314.81 850.24,314.61 850.61,314.49 C850.99,314.36 851.36,314.25 851.74,314.14 C852.11,314.02 852.49,313.90 852.86,313.79 C853.24,313.67 853.61,313.55 853.99,313.44 C854.36,313.32 854.74,313.21 855.11,313.09 C855.49,312.97 855.86,312.84 856.24,312.71 C856.61,312.59 856.98,312.46 857.35,312.34 C857.72,312.21 858.09,312.10 858.46,311.98 C858.84,311.85 859.21,311.72 859.59,311.60 C859.96,311.48 860.34,311.35 860.71,311.24 C861.09,311.13 861.47,311.04 861.85,310.95 C862.23,310.86 862.61,310.77 863.00,310.70 C863.39,310.63 863.78,310.59 864.17,310.55 C864.57,310.51 864.96,310.49 865.35,310.48 C865.74,310.46 866.13,310.47 866.52,310.48 C866.92,310.48 867.31,310.49 867.70,310.51 C868.09,310.54 868.68,310.61 868.88,310.62"/></g></mask>
+      </defs>
+      <g class="heart"><g mask="url(#mzh)"><path fill="#032F69" d="M827.64 306.54C821.34 306.54 814.04 301.81 809.02 294.41C805.72 289.53 803.79 284.16 803.60 279.24C803.40 274.06 805.12 269.97 808.43 267.70C813.50 264.26 821.19 265.98 827.84 271.99C834.49 265.98 842.18 264.21 847.26 267.70C850.56 269.97 852.28 274.06 852.09 279.24C851.89 284.16 849.97 289.58 846.66 294.41C841.59 301.85 834.20 306.68 827.79 306.54C827.74 306.54 827.64 306.54 827.59 306.54L827.64 306.54ZM827.84 303.73L827.99 303.73C833.41 303.73 839.96 299.39 844.40 292.84C847.40 288.40 849.18 283.52 849.33 279.09C849.47 274.90 848.19 271.65 845.68 269.97C841.54 267.16 834.59 269.18 828.83 274.90C828.28 275.44 827.40 275.44 826.86 274.90C821.09 269.18 814.14 267.16 810.00 269.97C807.49 271.65 806.21 274.90 806.36 279.09C806.50 283.52 808.28 288.40 811.28 292.84C815.72 299.39 822.27 303.73 827.64 303.73L827.79 303.73L827.84 303.73Z"/></g></g>
+      <g mask="url(#mzr)" fill="#032F69"><path d="M827.49 326.84C827.49 326.84 827.15 326.84 826.95 326.74L817.89 323.09C817.15 322.80 816.80 322.01 817.10 321.27C817.39 320.53 818.18 320.23 818.92 320.48L827.64 323.98L845.38 322.50C845.63 320.48 845.38 318.95 844.54 317.92C843.51 316.64 841.98 316.54 841.88 316.54L832.77 315.95C832.52 315.95 832.27 315.85 832.08 315.70C831.98 315.65 823.45 309.79 814.93 309.79C806.40 309.79 799.95 315.26 799.90 315.31C799.80 315.41 799.65 315.50 799.50 315.55L790.44 319.20C789.75 319.50 788.91 319.15 788.61 318.41C788.32 317.67 788.66 316.88 789.40 316.59L798.27 313.04C799.50 312.05 806.16 306.98 814.93 306.98C823.70 306.98 831.63 312.01 833.36 313.19L842.08 313.78C842.08 313.78 844.89 313.88 846.71 316.19C848.19 318.07 848.63 320.73 847.99 324.13C847.90 324.72 847.35 325.21 846.76 325.26L827.59 326.89L827.49 326.89L827.49 326.84Z"/><path d="M828.72 341.77C827.44 341.77 826.75 341.57 826.66 341.52L804.68 335.86L800.09 338.66C799.45 339.06 798.57 338.86 798.17 338.22C797.78 337.58 797.98 336.69 798.62 336.30L803.69 333.20C804.04 333.00 804.43 332.95 804.78 333.05L827.39 338.91C827.39 338.91 831.73 340.00 839.66 335.22C848.24 330.04 869.67 316.39 869.92 316.24C870.02 316.10 870.86 315.11 870.81 314.27C870.81 314.12 870.76 313.68 869.92 313.14C867.16 311.37 864.70 311.41 859.23 313.29C854.00 315.11 849.72 316.34 849.67 316.34C848.93 316.54 848.14 316.15 847.94 315.41C847.75 314.67 848.14 313.88 848.88 313.68C848.88 313.68 853.17 312.45 858.29 310.68C863.76 308.80 867.46 308.26 871.40 310.82C873.03 311.86 873.47 313.14 873.57 314.03C873.76 316.34 871.84 318.21 871.60 318.46C871.15 318.76 849.67 332.41 841.09 337.63C835.23 341.18 831.04 341.82 828.72 341.82L828.72 341.77Z"/><path d="M842.43 314.03C841.88 314.03 841.34 313.68 841.15 313.14C840.85 312.40 841.19 311.61 841.93 311.32L859.92 304.12C860.76 303.92 866.18 302.84 869.14 305.16C870.32 306.04 870.91 307.37 870.96 308.95C870.96 309.74 870.37 310.38 869.63 310.38C868.84 310.28 868.20 309.79 868.20 309.05C868.20 308.31 867.95 307.77 867.41 307.37C865.78 306.09 861.94 306.54 860.71 306.78L842.92 313.93C842.92 313.93 842.57 314.03 842.43 314.03Z"/><path d="M838.58 312.01C838.09 312.01 837.59 311.76 837.35 311.27C837.00 310.58 837.25 309.74 837.89 309.39L852.23 301.61C852.97 301.31 857.55 299.83 860.31 301.51C861.39 302.15 862.08 303.23 862.33 304.56C862.43 305.30 861.94 306.04 861.20 306.14C860.46 306.24 859.72 305.75 859.62 305.01C859.52 304.32 859.23 304.07 858.93 303.92C857.65 303.14 854.84 303.68 853.36 304.17L839.27 311.86C839.27 311.86 838.82 312.01 838.63 312.01L838.58 312.01Z"/></g>
+    </svg>
+    <div class="h2">СИТНО — еда от чистого сердца</div>
+    <div class="lead">Мы вкладываем в продукты честный труд и любовь к своему делу — чтобы вы вкладывали свою любовь в домашние блюда</div>
+  </div>
+</div></section>
+
+<!-- 3. Новинки -->
+<section class="blk"><div class="wrap">
+  <div class="bt">Новинки</div>
+  <div class="stage nov"><div class="cards"></div></div>
+</div></section>
+
+<!-- 4. Продукция -->
+<section class="blk"><div class="wrap">
+  <div class="bt">Продукция</div>
+  <div class="pgrid" data-v="B"></div>
+</div></section>
+
+<!-- 5. Кнопки -->
+<section class="blk"><div class="wrap">
+  <div class="bt">Кнопки и теги</div>
+  <div class="stage line kit">
+    <a class="btn pt"><span class="rh"></span>Где купить</a>
+    <a class="btn ghost pt"><span class="rh"></span>Смотреть все</a>
+    <span class="arr big go"><svg viewBox="0 0 12 11"><path d="M1 5.5h10M6.5 1l4.5 4.5L6.5 10" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="chips">
+      <span class="chip" style="--c:#F2B937">Мука пшеничная</span>
+      <span class="chip" style="--c:#6FA3DA">Хлеб приуральский</span>
+      <span class="chip" style="--c:#8CC152">Филе грудки</span>
+      <span class="chip" style="--c:#EE8C78">Ветчина куриная</span>
+    </div>
+  </div>
+</div></section>
+
+<script>
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const ARROW='<svg viewBox="0 0 12 11"><path d="M1 5.5h10M6.5 1l4.5 4.5L6.5 10" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const lerp=(a,b,t)=>a+(b-a)*t;
+
+/* ---------- 1. Первый экран ---------- */
+const hero=document.getElementById('hero');
+// упаковки на месте сгенерированных: координаты сцены 1880×961 -> обложка 1920×1054 (cover)
+const SC=1054/961, OX=(1920-1880*SC)/2;
+const HP=[['pasta',598,345,246,396,.8,'2.8s'],['muka',824,371,262,364,1.25,'3.05s'],['hleb',1047,386,265,352,.85,'3.3s']];
+hero.querySelector('.scene .pl').insertAdjacentHTML('beforeend',HP.map(([k,x,y,w,h,d,gd],i)=>{
+  const L=(x*SC+OX)/19.2,T=y*SC/10.54,Wp=w*SC/19.2,Hp=h*SC/10.54;
+  return `<div class="pkw" data-k="${k}" data-d="${d}" style="left:${L.toFixed(3)}%;top:${T.toFixed(3)}%;width:${Wp.toFixed(3)}%;height:${Hp.toFixed(3)}%;z-index:${i+1};--gd:${gd}">
+   <div class="cs"></div><div class="cs2"></div><div class="p3"></div></div>`}).join(''));
+document.querySelector('.dust').innerHTML=Array.from({length:16},()=>{
+  const l=30+Math.random()*40,s=(2+Math.random()*3).toFixed(1),t=(9+Math.random()*8).toFixed(1),x=(Math.random()*80-40).toFixed(0);
+  return `<i style="left:${l}%;--s:${s}px;--t:${t}s;--dl:${(-Math.random()*14).toFixed(1)}s;--x:${x}px"></i>`}).join('');
+// мышь: фон чуть в одну сторону, каждая упаковка — со своей глубиной
+const hbg=hero.querySelector('.scene .bg'),hpl=hero.querySelector('.scene .pl'),HF=[.055,.085,.068];
+const RA=[14,10,15];
+const hpk=[...hero.querySelectorAll('.pkw')].map((e,i)=>({e,k:e.dataset.k,g:e.querySelector('.p3'),f:HF[i],ra:RA[i],mx:0,my:0,sg:[]}));
+// объём: картинка упаковки раскладывается на полосы по профилю (пакет — выпуклая «подушка», мука — две грани коробки).
+// В покое проекция точно совпадает с исходной картинкой; при повороте полосы сжимаются/раскрываются как настоящая поверхность.
+function profile(k){
+  if(k==='muka')return[[0,.345,-52],[.345,1,38]];
+  const N=32,A=k==='hleb'?64:60,out=[];
+  for(let j=0;j<N;j++){const s=((j+.5)/N-.5)*2;out.push([j/N,(j+1)/N,A*Math.sign(s)*Math.pow(Math.abs(s),2.2)])}
+  return out;
+}
+function build3d(){
+  hpk.forEach((o,i)=>{
+    const W=o.e.clientWidth,H=o.e.clientHeight,pr=profile(o.k),src=`pk_${o.k}.png`,rad=Math.PI/180,NS='http://www.w3.org/2000/svg';
+    o.pr=pr;o.g.innerHTML=`<svg class="df"><defs><mask id="mk${i}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}" style="mask-type:alpha"><image href="${src}" width="${W}" height="${H}" preserveAspectRatio="none"/></mask>
+      <linearGradient id="ld${i}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="0"></linearGradient>
+      <linearGradient id="ll${i}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="0"></linearGradient></defs></svg>`;
+    o.ld=o.g.querySelector('#ld'+i);o.ll=o.g.querySelector('#ll'+i);
+    // опорные точки света: середина каждой полосы (у коробки — края граней, ребро резкое)
+    o.st=[];const pts0=o.k==='muka'?[[0,0],[.343,0],[.347,1],[1,1]]:pr.map(([u0,u1],j)=>[(u0+u1)/2,j]);
+    pts0.forEach(([u,j])=>{const a=document.createElementNS(NS,'stop'),b=document.createElementNS(NS,'stop');
+      a.setAttribute('offset',u.toFixed(4));b.setAttribute('offset',u.toFixed(4));a.setAttribute('stop-color','#2A1606');b.setAttribute('stop-color','#FFF4DC');
+      o.ld.appendChild(a);o.ll.appendChild(b);o.st.push({a,b,al:pr[j][2],fa:'',fb:''})});
+    let x=0,z=0;const pts=[[0,0]];
+    pr.forEach(([u0,u1,al])=>{
+      const c=Math.cos(al*rad),sn=Math.sin(al*rad),w=(u1-u0)*W/c,ov=1.5,el=document.createElement('div');
+      el.className='sg';el.style.cssText=`${o.k==='muka'?'filter:brightness(1.07) saturate(1.06);':''}width:${(w+ov).toFixed(2)}px;height:${H}px;transform:translate3d(${x.toFixed(2)}px,0,${z.toFixed(2)}px) rotateY(${al}deg)`;
+      el.innerHTML=`<svg width="100%" height="100%" viewBox="${(u0*W).toFixed(2)} 0 ${((u1-u0)*W+ov*c).toFixed(2)} ${H}" preserveAspectRatio="none" style="display:block;overflow:hidden">
+        <image href="${src}" width="${W}" height="${H}" preserveAspectRatio="none"/>
+        <g mask="url(#mk${i})"><rect width="${W}" height="${H}" fill="url(#ld${i})"/><rect class="hl" width="${W}" height="${H}" fill="url(#ll${i})"/></g></svg>`;
+      o.g.appendChild(el);x+=w*c;z-=w*sn;pts.push([x,z]);
+    });
+    const zs=pts.map(p=>p[1]),zMax=Math.max(...zs),zMin=Math.min(...zs);
+    o.az=o.k==='muka'?(pts[0][1]+pts[2][1])/2:zMax-.3*W;   // ось вращения — центр коробки / середина толщины пакета
+    o.ax=o.k==='muka'?(pts[0][0]+pts[2][0])/2:W/2;
+    o.zc=-(zMax+zMin)/2;
+    o.g.style.transformOrigin=`${o.ax.toFixed(1)}px ${H}px ${o.az.toFixed(1)}px`;
+  });
+}
+// свет — один плавный градиент по всей поверхности: тень по нормали + блик, который переливается по изгибу при повороте
+function shade(o,ry){
+  const rad=Math.PI/180;
+  o.st.forEach(t=>{
+    const a=t.al+ry,d=Math.max(0,Math.cos((a+8)*rad)),
+      sp=Math.pow(Math.max(0,Math.cos((a+24)*rad)),22),sp2=Math.pow(Math.max(0,Math.cos((a-38)*rad)),30);
+    const d0=Math.max(0,Math.cos((t.al+8)*rad)),da=(o.k==='muka'?Math.max(0,.01+.26*(d0-d)):.04+.26*(1-d)).toFixed(3),la=Math.min(.5,.4*sp+.16*sp2).toFixed(3);
+    if(da!==t.fa){t.a.setAttribute('stop-opacity',da);t.fa=da}
+    if(la!==t.fb){t.b.setAttribute('stop-opacity',la);t.fb=la}
+  });
+}
+let hmx=0,hmy=0,hbx=0,hby=0;
+hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();hmx=(e.clientX-r.left)/r.width-.5;hmy=(e.clientY-r.top)/r.height-.5});
+hero.addEventListener('mouseleave',()=>{hmx=0;hmy=0});
+function heroLoop(){
+  if(!RM){const k=hero.clientWidth/1920;
+    hbx=lerp(hbx,-hmx*12*k,.06);hby=lerp(hby,-hmy*6*k,.06);
+    const tr=`translate3d(${hbx.toFixed(2)}px,${hby.toFixed(2)}px,0) scale(1.03)`;hbg.style.transform=tr;hpl.style.transform=tr;
+    // упаковки едут вместе со столом (не скользят по скатерти) и каждая со своей задержкой
+    // поворачивается к курсору вокруг своей оси как объёмный предмет — дно остаётся на месте, нет «пласта»
+    hpk.forEach(o=>{o.mx=lerp(o.mx,hmx,o.f);o.my=lerp(o.my,hmy,o.f);
+      const ry=o.mx*2*o.ra, rx=-o.my*5;
+      o.e.style.transform=`translate3d(${(o.mx*3*k).toFixed(2)}px,0,0)`;
+      o.g.style.transform=`translateZ(${o.zc.toFixed(1)}px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
+      shade(o,ry)});}
+  requestAnimationFrame(heroLoop);
+}
+requestAnimationFrame(heroLoop);
+
+/* ---------- 2. О бренде: ромбы с разной скоростью ---------- */
+const about=document.getElementById('about');
+const RB=[
+  {w:200,l:'5%', t:'12%',c:'#FFE3A0',s:-.16},{w:96, l:'19%',t:'30%',c:'#F6C4B8',s:.12},
+  {w:120,l:'14%',t:'70%',c:'#C9E3A6',s:-.06},{w:70, l:'4%', t:'58%',c:'#FFC846',s:.2},
+  {w:180,r:'5%', t:'10%',c:'#C9E3A6',s:.15},{w:86, r:'20%',t:'26%',c:'#FFC846',s:-.2},
+  {w:140,r:'7%', t:'66%',c:'#FBE3D6',s:-.1},{w:66, r:'22%',t:'78%',c:'#F6C4B8',s:.08}];
+about.insertAdjacentHTML('afterbegin',RB.map((r,i)=>`<div class="fl" style="--w:${r.w}px;${r.l?'left:'+r.l:'right:'+r.r};top:${r.t};--c:${r.c};--dl:${(.05+i*.05).toFixed(2)}s"><b></b></div>`).join(''));
+const fls=[...about.querySelectorAll('.fl')].map((e,i)=>({e,s:RB[i].s,c:0}));
+
+/* ---------- 3. Новинки ---------- */
+const AR={muka:.7222,pasta:.6222,hleb:.7522};
+const NOV=[
+  {pk:'muka',t:'Мука пшеничная хлебопекарная',m:'ВЫСШИЙ СОРТ · 2 КГ',a:'#D6E799',b:'#FFD86E'},
+  {pk:'pasta',t:'Паста из твёрдой пшеницы',m:'ВЫСШИЙ СОРТ · 400 Г',a:'#FFE3A0',b:'#F8C3B6'},
+  {pk:'hleb',t:'Хлеб приуральский',m:'НА ЗАКВАСКЕ · 300 Г',a:'#FFE3A0',b:'#BFD6F1'}];
+document.querySelector('.cards').innerHTML=NOV.map(c=>`<div class="card">
+  <div class="ph" style="background:${c.a}"><div class="pb"><svg viewBox="0 0 400 300" preserveAspectRatio="none">
+    <polygon points="480,-60 520,-60 520,380 -100,380" fill="${c.b}"/>
+    <path class="sd" d="M480,-60 L-100,380" stroke="#fff" stroke-width="1.2" fill="none" opacity=".85" vector-effect="non-scaling-stroke"/></svg></div></div>
+  <div class="over"><span class="rh"></span>НОВИНКА</div>
+  <div class="pkw"><img src="pk_${c.pk}.png" alt="" style="height:${Math.round(Math.sqrt(34000/AR[c.pk]))}px"></div>
+  <div class="h3">${c.t}</div><div class="ft"></div><div class="mt">${c.m}</div>
+  <span class="arr">${ARROW}</span></div>`).join('');
+
+/* ---------- 4. Продукция: плитки по макету (координаты 930×520) ---------- */
+const CATS=[
+  {bg:'#FDF5DF',cl:'#F6D27E',ch:'#F2B937',t:'Мука и макароны',o:'Пшеница собственных полей',chips:['Мука пшеничная','Паста из твёрдых сортов','Манная крупа','Отруби'],
+   rs:[513.38,396.27,384.96,17.63],bs:[[533.77,392.44,154.77,19.59,8.49],[710.57,393.15,167.5,18.61,7.88]],pk:[['p1a',522.91,122,176.32,283.09],['p1b',698.91,142.57,190.03,262.52]]},
+  {bg:'#EDF4FC',cl:'#A9C8EC',ch:'#6FA3DA',t:'Хлебобулочные и кондитерские',o:'Выпекаем каждую ночь',chips:['Хлеб приуральский','Булочка пиццетта','Печенье к чаю','Батон нарезной'],
+   rs:[509.4,396.8,392.8,17.63],bs:[[530.75,394.22,170.44,17.63,7.73],[610.57,401.52,264.48,13.71,5.88]],pk:[['p2a',518.92,148,193.95,257.62],['p2b',592.09,314.52,300.72,91.1]]},
+  {bg:'#F1F8E7',cl:'#B4DA88',ch:'#8CC152',t:'Мясо птицы и яйцо',o:'Охлаждённое, без заморозки',chips:['Филе грудки','Цыплёнок табака','Яйцо столовое','Крыло, голень'],
+   rs:[509.72,397.3,392.12,16.41],bs:[[531.3,396.08,178.73,14.59,6.4],[732.38,394.3,150.46,17.33,7.61]],pk:[['p3a',519.04,192.12,203.36,213.39],['p3b',722.23,152,170.53,253.51]]},
+  {bg:'#FDF0EC',cl:'#F1B0A1',ch:'#EE8C78',t:'Полуфабрикаты и<br>мясная гастрономия',o:'Варим, коптим, запекаем',chips:['Ветчина куриная','Колбаса варёная','Наггетсы','Котлеты домашние'],
+   rs:[538.31,396.8,334.02,17.63],bs:[[558.77,392.97,154.77,19.59,8.49],[732.64,391.77,121.46,21.55,9.17]],pk:[['p4a',548.07,122.53,176.32,283.09],['p4b',724.49,100,138.12,305.62]]}];
+function tableSvg(c,i,v){
+  const id=`q${v}${i}`;
+  return `<svg class="tb" viewBox="0 0 930 520"><defs>
+    <pattern id="${id}" width="44" height="30" patternUnits="userSpaceOnUse" x="465" y="442"><rect width="44" height="30" fill="#fff"/><polygon points="22,0 44,15 22,30 0,15" fill="${c.cl}" opacity=".22"/><polygon points="22,3 40,15 22,27 4,15" fill="none" stroke="#fff" stroke-width="1" stroke-dasharray="3 2"/></pattern>
+    <linearGradient id="${id}g" x1="0" y1="442" x2="0" y2="454" gradientUnits="userSpaceOnUse"><stop stop-color="#7A5A20" stop-opacity=".1"/><stop offset="1" stop-color="#7A5A20" stop-opacity="0"/></linearGradient></defs>
+    <path d="M534 369L930 347V442H465L534 369Z" fill="#fff"/>
+    <path d="M465 442L534 369V520H465Z" fill="url(#${id})"/><path d="M465 442L534 369V520H465Z" fill="#000" opacity=".045"/>
+    <path d="M465 442H930V520H465Z" fill="url(#${id})"/>
+    <path d="M465 442H930V454H465Z" fill="url(#${id}g)"/>
+    <path d="M465 442H930M465 442L534 369" stroke="#fff" stroke-width="2" stroke-dasharray="7 5"/>
+    <path d="M465 442V520" stroke="#000" stroke-opacity=".05" stroke-width="2"/></svg>`;
+}
+function rr(x,y,w,h,r){return `M${x+r},${y} H${x+w-r} A${r},${r} 0 0 1 ${x+w},${y+r} V${y+h-r} A${r},${r} 0 0 1 ${x+w-r},${y+h} H${x+r} A${r},${r} 0 0 1 ${x},${y+h-r} V${y+r} A${r},${r} 0 0 1 ${x+r},${y} Z`}
+document.querySelectorAll('.pgrid').forEach(g=>{
+  const v=g.dataset.v;
+  g.innerHTML=CATS.map((c,i)=>{
+    const stitch=v==='A'
+      ? `<svg class="st" viewBox="0 0 930 520"><defs><mask id="m${v}${i}" maskUnits="userSpaceOnUse" x="0" y="0" width="930" height="520"><path class="draw" style="--d:${(1.1+i*.18).toFixed(2)}s;--dl:${(.1+i*.28).toFixed(2)}s" pathLength="1" d="${rr(14,14,902,492,20)}" fill="none" stroke="#fff" stroke-width="8"/></mask></defs><path d="${rr(14,14,902,492,20)}" fill="none" stroke="${c.ch}" stroke-width="1.6" stroke-dasharray="7 7" stroke-linecap="round" opacity=".75" mask="url(#m${v}${i})"/></svg>`
+      : `<svg class="seam" viewBox="0 0 930 406"><defs><mask id="m${v}${i}" maskUnits="userSpaceOnUse" x="0" y="0" width="930" height="406"><path class="draw" style="--d:1.3s;--dl:${(.1+i*.22).toFixed(2)}s" pathLength="1" d="M0 406 L930 0" fill="none" stroke="#fff" stroke-width="10"/></mask></defs><path d="M0 406 L930 0" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="8 7" opacity=".9" mask="url(#m${v}${i})"/></svg>`;
+    return `<div class="pt-o p${v}" style="background:${c.bg}"><div class="pt-i" style="--dl:${(.1+i*.22).toFixed(2)}s">
+      <div class="dg"><img src="prod_diag${i+1}.png" alt=""></div>${v==='B'?stitch:''}
+      <div class="lift">${tableSvg(c,i,v)}
+      <div class="rs" style="left:${c.rs[0]}px;top:${c.rs[1]}px;width:${c.rs[2]}px;height:${c.rs[3]}px;background:radial-gradient(50% 50% at 50% 50%,rgba(60,35,10,.3),rgba(60,35,10,0) 70%)"></div>
+      ${c.bs.map(b=>`<div class="bs" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]}px;height:${b[3]}px;filter:blur(${b[4]}px)"></div>`).join('')}
+      ${c.pk.map(p=>`<img class="pk" src="prod_${p[0]}.png" alt="" style="left:${p[1]}px;top:${p[2]}px;width:${p[3]}px;height:${p[4]}px">`).join('')}</div>
+      <div class="tx"><div class="tt">${c.t}</div><div class="ov">${c.o}</div>
+        <div class="chs">${c.chips.map((x,j)=>`<span class="chip${j?'':' on'}" style="--c:${c.ch}">${x}</span>`).join('')}</div></div>
+      <span class="ar">${ARROW}</span>
+      ${v==='A'?stitch:''}</div></div>`;
+  }).join('');
+});
+function scaleTiles(){
+  document.querySelectorAll('.pgrid').forEach(g=>{const o=g.querySelector('.pt-o');if(o)g.style.setProperty('--k',(o.clientWidth/930).toFixed(4))});
+  hero.style.setProperty('--k',(hero.clientWidth/1920).toFixed(4));
+  build3d();hpk.forEach(o=>{o.g.style.transform=`translateZ(${o.zc.toFixed(1)}px)`;shade(o,0)});
+}
+
+/* ---------- плавный цикл: ромбы «О бренде» ---------- */
+function loop(){
+  if(!RM){
+    const vh=innerHeight,r=about.getBoundingClientRect(),d=r.top+r.height/2-vh/2;
+    fls.forEach(o=>{o.c=lerp(o.c,d*o.s*.32,.07);o.e.style.transform=`translate3d(0,${o.c.toFixed(2)}px,0) rotate(${(o.c*.04).toFixed(3)}deg)`});
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------- запуск при появлении блока ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  const s=e.target;
+  if(e.isIntersecting&&e.intersectionRatio>=.25){if(!s.classList.contains('on')){void s.offsetWidth;s.classList.add('on')}}
+  else if(!e.isIntersecting)s.classList.remove('on');
+}),{threshold:[0,.25]});
+document.querySelectorAll('.blk').forEach(s=>io.observe(s));
+
+addEventListener('resize',scaleTiles);
+scaleTiles();document.fonts.ready.then(scaleTiles);
+</script>
+</body>
+</html>
