@@ -91,6 +91,12 @@ img{display:block}
 @keyframes dust{0%{transform:translate(0,0);opacity:0}15%{opacity:.8}85%{opacity:.6}100%{transform:translate(var(--x),calc(var(--k)*-560px));opacity:0}}
 .h-glow{position:absolute;inset:0;pointer-events:none;background:#FFF6E2;opacity:.92;transition:opacity 2s var(--soft-io) .3s}
 .on .h-glow{opacity:0}
+/* пока фон, упаковки и шрифт не загружены — первый экран пустой тёплый, без кусков */
+.hero:not(.ready)>*{visibility:hidden}
+.hero:after{content:'';position:absolute;left:50%;top:50%;width:22px;height:13px;margin:-6px 0 0 -11px;background:#F2B52A;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);opacity:0;animation:hload 1.2s ease-in-out infinite;transition:opacity .3s;pointer-events:none}
+.hero:not(.ready):after{opacity:.9}
+.hero.ready:after{animation:none;opacity:0}
+@keyframes hload{0%,100%{transform:scale(.8)}50%{transform:scale(1.15)}}
 /* шапка — стеклянная плашка поверх сцены */
 .hd{position:absolute;z-index:5;left:50%;top:calc(var(--k)*18px);width:calc(var(--k)*1844px);height:calc(var(--k)*72px);margin-left:calc(var(--k)*-922px);display:flex;align-items:center;padding:0 calc(var(--k)*10px) 0 calc(var(--k)*15px);border-radius:200px;background:rgba(255,255,255,.6);-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);opacity:0;transform:translateY(calc(var(--k)*-24px));transition:opacity .9s var(--soft) .05s,transform .9s var(--soft) .05s}
 .on .hd{opacity:1;transform:none}
@@ -460,12 +466,24 @@ function loop(){
 requestAnimationFrame(loop);
 
 /* ---------- запуск при появлении блока ---------- */
+// блок запускается, только когда загружены его картинки (на медленной сети — не кусками)
+const loadImg=src=>new Promise(r=>{const i=new Image();i.onload=i.onerror=()=>(i.decode?i.decode().catch(()=>{}):Promise.resolve()).then(r);i.src=src});
+const imgsOf=b=>[...b.querySelectorAll('img')].map(i=>i.complete&&i.naturalWidth?(i.decode?i.decode().catch(()=>{}):0):loadImg(i.currentSrc||i.src));
+const blks=[...document.querySelectorAll('.blk')],heroBlk=hero.closest('.blk');
+blks.forEach(b=>{
+  let need=imgsOf(b);
+  if(b===heroBlk)need=need.concat(['hero9_clean.jpg',...HP.map(p=>`pk_${p[0]}.png`)].map(loadImg),[document.fonts.ready]);
+  Promise.race([Promise.all(need),new Promise(r=>setTimeout(r,15000))]).then(()=>{
+    b.dataset.ready=1;if(b===heroBlk)hero.classList.add('ready');
+    if(b.dataset.vis){void b.offsetWidth;b.classList.add('on')}
+  });
+});
 const io=new IntersectionObserver(es=>es.forEach(e=>{
   const s=e.target;
-  if(e.isIntersecting&&e.intersectionRatio>=.25){if(!s.classList.contains('on')){void s.offsetWidth;s.classList.add('on')}}
-  else if(!e.isIntersecting)s.classList.remove('on');
+  if(e.isIntersecting&&e.intersectionRatio>=.25){s.dataset.vis=1;if(s.dataset.ready&&!s.classList.contains('on')){void s.offsetWidth;s.classList.add('on')}}
+  else if(!e.isIntersecting){delete s.dataset.vis;s.classList.remove('on')}
 }),{threshold:[0,.25]});
-document.querySelectorAll('.blk').forEach(s=>io.observe(s));
+blks.forEach(s=>io.observe(s));
 
 addEventListener('resize',scaleTiles);
 scaleTiles();document.fonts.ready.then(scaleTiles);
